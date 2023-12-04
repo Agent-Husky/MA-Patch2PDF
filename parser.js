@@ -36,7 +36,7 @@ function parseCSV(csv) {
         rowelements = value.split(";");
         layer = rowelements.splice(layerindex, 1);
         temp = {}
-        value.split(";").forEach(function(value, index) {
+        rowelements.forEach(function(value, index) {
             temp[headers[index]] = value;
         });
         if(typeof data[layer] === "undefined"){
