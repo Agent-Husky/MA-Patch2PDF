@@ -27,22 +27,25 @@ function parseCSV(csv) {
     var data = {};
     lines = csv.split("\n");
     headers = lines[0].split(";");
-    layerindex = headers.indexOf("Layer");
+    layerlistpos = headers.indexOf("Layer");
+    layerindex = 1;
     lines.shift();
     lines = lines.filter(function (el) {
         return el != "";
     });
     lines.forEach(function(value, rowindex) {
         rowelements = value.split(";");
-        layer = rowelements.splice(layerindex, 1);
+        layer = rowelements.splice(layerlistpos, 1);
         temp = {}
         rowelements.forEach(function(value, index) {
             temp[headers[index]] = value;
         });
-        if(typeof data[layer] === "undefined"){
-            data[layer] = [];
+        if(typeof data[layer] === "undefined") {
+            data[layer] = {};
+            data[layer].index = layerindex++;
         }
-        data[layer].push(temp);
+        if(typeof data[layer].data === "undefined") data[layer].data = [];
+        data[layer].data.push(temp);
     });
     return data;
 }
@@ -54,7 +57,9 @@ function parseXML(xml) {
     layers = xmlDoc.getElementsByTagName("Layer");
     for (let layer of layers) {
         if(typeof data[layer] === "undefined"){
-            data[layer.attributes.name.value] = [];
+            data[layer.attributes.name.value] = {};
+            data[layer.attributes.name.value].data = [];
+            data[layer.attributes.name.value].index = Number(layer.attributes.index.value);
         }
         fixtures = layer.getElementsByTagName("Fixture");
         for (let fixture of fixtures){
@@ -75,9 +80,8 @@ function parseXML(xml) {
                 temp.Position = {x: null, y: null, z: null};
             }
             temp.Color = subfix.attributes.color.value;
-            data[layer.attributes.name.value].push(temp);
+            data[layer.attributes.name.value].data.push(temp);
         }
     }
-    console.log(data);
-    return xmlDoc;
+    return data;
 }
