@@ -1,4 +1,5 @@
 var filecontent;
+var filename;
 
 function readFile(){
     const content = document.getElementById("testcontent");
@@ -14,6 +15,7 @@ function readFile(){
         }else if(file.type === "text/xml"){
             filecontent = parseXML(reader.result);
         }
+        filename = file.name;
         },
         false,
     );
@@ -25,9 +27,11 @@ function readFile(){
 
 function parseCSV(csv) {
     var data = {};
-    lines = csv.split("\n");
+    lines = csv.replace(/\"/g, "").split("\n");
     headers = lines[0].split(";");
     layerlistpos = headers.indexOf("Layer");
+    headers[headers.indexOf("Fix ID")] = "FixtureID";
+    headers[headers.indexOf("Ch ID")] = "ChannelID";
     layerindex = 1;
     lines.shift();
     lines = lines.filter(function (el) {
@@ -36,9 +40,10 @@ function parseCSV(csv) {
     lines.forEach(function(value, rowindex) {
         rowelements = value.split(";");
         layer = rowelements.splice(layerlistpos, 1);
+        //layer = rowelements;
         temp = {}
         rowelements.forEach(function(value, index) {
-            temp[headers[index]] = value;
+            temp[headers[index+1]] = value;
         });
         if(typeof data[layer] === "undefined") {
             data[layer] = {};
@@ -64,12 +69,12 @@ function parseXML(xml) {
         fixtures = layer.getElementsByTagName("Fixture");
         for (let fixture of fixtures){
             temp = {};
+            subfix = fixture.getElementsByTagName("SubFixture")[0];
             temp.FixtureID = (typeof fixture.attributes.fixture_id !== "undefined")? fixture.attributes.fixture_id.value : null;
-            temp.ChannelID = (typeof fixture.attributes.channel_id !== "undefined")? fixture.attributes.channel_id.value : null;
+            temp.ChannelID = (typeof fixture.attributes.channel_id !== "undefined")? fixture.attributes.channel_id.value + "." + (Number(subfix.attributes.index.value)+1) : null;
             temp.Name = (typeof fixture.attributes.name !== "undefined")? fixture.attributes.name.value : null;
             fixtype = fixture.getElementsByTagName("FixtureType")[0];
             temp.FixtureType = (typeof fixtype.attributes.name !== "undefined")? fixtype.attributes.name.value : null;
-            subfix = fixture.getElementsByTagName("SubFixture")[0];
             address = subfix.getElementsByTagName("Address")[0].textContent;
             temp.Patch = Math.ceil(address/512)+"."+('000' + address%512).slice(-3);
             abspos = subfix.getElementsByTagName("AbsolutePosition")[0];
