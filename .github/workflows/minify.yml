@@ -1,12 +1,23 @@
 name: minifyJS
-on: push
+on: 
+  pull_request:
+    types: 
+      - closed
+    branches: 
+      - 'master'
+    paths:
+      - '**.js'
+      - '**.css'
 jobs:
   minify:
-    runs-on: debian-latest
+    runs-on: ubuntu-latest
+    environment: masterAutoPush
     if: github.ref == 'refs/heads/master'
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so auto-minify job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
     
       - name: Auto Minify
         uses: nizarmah/auto-minify@v2.1
@@ -16,7 +27,8 @@ jobs:
       # Auto commits minified content to the existing files
       # Ignore it if you don't want to commit the files to the repository 
       - name: Auto committing minified files
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Github Action: Auto Minified JS and CSS files"
           branch: ${{ github.ref }}
+          push_options: --force
