@@ -9,7 +9,6 @@ function readFile(){
     reader.addEventListener(
         "load",
         () => {
-        // this will then display a text file
         if(file.type === "text/csv"){
             filecontent = parseCSV(reader.result);
         }else if(file.type === "text/xml"){
@@ -40,7 +39,6 @@ function parseCSV(csv) {
     lines.forEach(function(value, rowindex) {
         rowelements = value.split(";");
         layer = rowelements.splice(layerlistpos, 1);
-        //layer = rowelements;
         temp = {}
         rowelements.forEach(function(value, index) {
             temp[headers[index+1]] = value;
