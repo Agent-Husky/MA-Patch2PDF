@@ -69,24 +69,76 @@ function parseXML(xml) {
         fixtures = layer.getElementsByTagName("Fixture");
         for (let fixture of fixtures){
             temp = {};
-            subfix = fixture.getElementsByTagName("SubFixture")[0];
-            temp.FixtureID = (typeof fixture.attributes.fixture_id !== "undefined")? fixture.attributes.fixture_id.value : null;
-            temp.ChannelID = (typeof fixture.attributes.channel_id !== "undefined")? fixture.attributes.channel_id.value + "." + (Number(subfix.attributes.index.value)+1) : null;
-            temp.Name = (typeof fixture.attributes.name !== "undefined")? fixture.attributes.name.value : null;
+            subfixtures = fixture.getElementsByTagName("SubFixture");
+            temp.FixtureID = returnIfDefined(fixture.attributes.fixture_id);
+            temp.ChannelID = returnIfDefined(fixture.attributes.channel_id, "." + (Number(subfixtures[0].attributes.index.value)+1));
+            temp.Name = returnIfDefined(fixture.attributes.name);
             fixtype = fixture.getElementsByTagName("FixtureType")[0];
-            temp.FixtureType = (typeof fixtype.attributes.name !== "undefined")? fixtype.attributes.name.value : null;
-            address = subfix.getElementsByTagName("Address")[0].textContent;
-            temp.Patch = Math.ceil(address/512)+"."+('000' + address%512).slice(-3);
-            abspos = subfix.getElementsByTagName("AbsolutePosition")[0];
-            if(typeof abspos !== "undefined"){
-                abslocation = abspos.getElementsByTagName("Location")[0];
-                temp.Position = {x: abslocation.attributes.x.value, y: abslocation.attributes.y.value, z: abslocation.attributes.z.value};
-            }else{
-                temp.Position = {x: null, y: null, z: null};
-            }
-            temp.Color = subfix.attributes.color.value;
+            temp.FixtureType = returnIfDefined(fixtype.attributes.name);
+            temp.Patch = getPatch(subfixtures);
+            temp.Position = getPosition(subfixtures);
+            temp.Color = subfixtures[0].attributes.color.value;
             data[layer.attributes.name.value].data.push(temp);
         }
     }
     return data;
+}
+
+function returnIfDefined(element, appendifdefined = ""){
+    return (typeof element !== "undefined")?element.value + appendifdefined:null;
+}
+
+function getPatch(subfixtures){
+    let address;
+    if(subfixtures.length === 1){
+        address = subfixtures[0].getElementsByTagName("Address")[0].textContent;
+    }else{
+        let patches = [];
+        for(let subfix of subfixtures){
+            patches.push(Number(subfix.getElementsByTagName("Address")[0].textContent));
+        }
+        address = Math.min(...patches);
+    }
+    return Math.ceil(address/512)+"."+('000' + address%512).slice(-3);
+}
+
+function getMiddle(valueArray){
+    sum = valueArray.reduce((a, b) => a + b, 0);
+    return sum / valueArray.length;
+}
+
+function getPosition(subfixtures){
+    let position = {};
+    if(subfixtures.length === 1){
+        abspos = subfixtures[0].getElementsByTagName("AbsolutePosition")[0];
+        if(typeof abspos !== "undefined"){
+            abslocation = abspos.getElementsByTagName("Location")[0];
+            position.x = abslocation.attributes.x.value;
+            position.y = abslocation.attributes.y.value;
+            position.z = abslocation.attributes.z.value;
+        }
+    }else{
+        xarray = [];
+        yarray = [];
+        zarray = [];
+        positions = [];
+        for(let subfix of subfixtures){
+            abspos = subfix.getElementsByTagName("AbsolutePosition")[0];
+            if(typeof abspos !== "undefined"){
+                absposattr = abspos.getElementsByTagName("Location")[0].attributes;
+                xarray.push(Number(absposattr.x.value));
+                yarray.push(Number(absposattr.y.value));
+                zarray.push(Number(absposattr.z.value));
+            }else{
+                continue;
+            }
+        }
+        position.x = getMiddle(xarray);
+        position.y = getMiddle(yarray);
+        position.z = getMiddle(zarray);
+    }
+    if(typeof position.x === "undefined") position.x = null;
+    if(typeof position.y === "undefined") position.y = null;
+    if(typeof position.z === "undefined") position.z = null;
+    return position;
 }
