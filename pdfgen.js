@@ -24,7 +24,7 @@ function pdfgen(filedata, filename){
         layertable = [];
         layertable[0] = [];
         layertable[0].push({
-            text: "Layer: "+layer, bold: true, margin: [0, 10, 0, 3], fontSize: 11
+            text: "Layer: "+layer, bold: true, margin: (layerindexes.indexOf(layervalue.index)==0)?[0, 0, 0, 3]:[0, 10, 0, 3], fontSize: 11
         });
         temptable = {
             layout: "fixturetable",
