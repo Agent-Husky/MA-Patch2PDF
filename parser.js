@@ -68,14 +68,16 @@ function parseXML(xml) {
         }
         fixtures = layer.getElementsByTagName("Fixture");
         for (let fixture of fixtures){
-            temp = {};
             subfixtures = fixture.getElementsByTagName("SubFixture");
+            patch = getPatch(subfixtures);
+            if(patch === null) continue;
+            temp = {};
             temp.FixtureID = returnIfDefined(fixture.attributes.fixture_id);
             temp.ChannelID = returnIfDefined(fixture.attributes.channel_id, "." + (Number(subfixtures[0].attributes.index.value)+1));
             temp.Name = returnIfDefined(fixture.attributes.name);
             fixtype = fixture.getElementsByTagName("FixtureType")[0];
             temp.FixtureType = returnIfDefined(fixtype.attributes.name);
-            temp.Patch = getPatch(subfixtures);
+            temp.Patch = patch;
             temp.Position = getPosition(subfixtures);
             temp.Color = subfixtures[0].attributes.color.value;
             data[layer.attributes.name.value].data.push(temp);
@@ -91,7 +93,7 @@ function returnIfDefined(element, appendifdefined = ""){
 function getPatch(subfixtures){
     let address;
     if(subfixtures.length === 1){
-        address = subfixtures[0].getElementsByTagName("Address")[0].textContent;
+        address = Number(subfixtures[0].getElementsByTagName("Address")[0].textContent);
     }else{
         let patches = [];
         for(let subfix of subfixtures){
@@ -99,12 +101,12 @@ function getPatch(subfixtures){
         }
         address = Math.min(...patches);
     }
-    return Math.ceil(address/512)+"."+('000' + address%512).slice(-3);
+    return (address !== 0)?Math.ceil(address/512)+"."+('000' + address%512).slice(-3):null;
 }
 
 function getMiddle(valueArray){
     sum = valueArray.reduce((a, b) => a + b, 0);
-    return sum / valueArray.length;
+    return Number((sum / valueArray.length).toFixed(2));
 }
 
 function getPosition(subfixtures){
