@@ -15,12 +15,14 @@ function getbase64(imgsrcid){
 function pdfgen(filedata, filename){
     pdflayercontent = [];
     Object.entries(filedata).forEach(entry => {
-        const [layer, layervalue] = entry; //TODO: respect index order;
-        pdflayercontent.push({
+        const [layer, layervalue] = entry;
+        layertable = [];
+        layertable[0] = [];
+        layertable[0].push({
             text: "Layer: "+layer, bold: true, margin: [0, 10, 0, 3], fontSize: 11
         });
         temptable = {
-            layout: "layertable",
+            layout: "fixturetable",
             table: {
                 headerRows: 1,
                 widths:[25, 25, 30, 70, 130, "*"],
@@ -43,9 +45,9 @@ function pdfgen(filedata, filename){
                     {text: "( "+ value.Position.x + " | " + value.Position.y + " | " + value.Position.z + " )", alignment: "left"} :
                     ""
             ]);
-        })
-        console.log(temptable);
-        pdflayercontent.push(temptable);
+        });
+        layertable[0].push(temptable);
+        pdflayercontent[layervalue.index-1] = layertable;
     });
 
     dd = {
@@ -100,7 +102,16 @@ function pdfgen(filedata, filename){
                 }]
             
         }],
-        content: pdflayercontent,
+        content: [{
+            layout: "layertable",
+            widths: ["*"],
+            margin: [0,0,0,0],
+            table:
+            {
+                body: pdflayercontent
+            }
+        }],
+        //content: pdflayercontent,
         styles: {
             layerTableHeader: {
                 alignment: "left",
@@ -114,7 +125,6 @@ pdfMake.tableLayouts = {
     fileheader: {
         vLineWidth: function (i) {
             if(i!=0 && i!=4){
-                    console.log(i);
                     return 0;
             }else{
                 return 1;
@@ -131,7 +141,7 @@ pdfMake.tableLayouts = {
             }
         }
     },
-    layertable: {
+    fixturetable: {
         fillColor: function (rowIndex, node, columnIndex) {
             if(rowIndex === 0){
                 return "#707070";
@@ -141,5 +151,13 @@ pdfMake.tableLayouts = {
                 return null;
             }
         }
+    },
+    layertable: {
+        paddingLeft: function(i, node) { return 0; },
+        paddingRight: function(i, node) { return 0; },
+        paddingTop: function(i, node) { return 0; },
+        paddingBottom: function(i, node) { return 0; },
+        vLineWidth: function(i) { return 0 },
+        hLineWidth: function(i) { return 0 }
     }
 };
