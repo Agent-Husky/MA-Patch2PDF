@@ -14,7 +14,11 @@
 
 <body>
     <form>
-        <img id="Logo" src="include/logo.png" style="display:none"/>
+        <select id="logoselector" onchange="document.getElementById('Logo').src = 'include/'+document.getElementById('logoselector').value">
+            <option value="ma.png" selected>MA Lighting</option>
+            <option value="amplified.png">Amplified</option>
+        </select>
+        <img id="Logo" src="include/ma.png" style="display:none"/>
         <input id="fileinput" onchange="readFile()" type="file">
     </form>
     <div id="testcontent"></div>
