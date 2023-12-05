@@ -76,6 +76,7 @@ function parseXML(xml) {
             fixtype = fixture.getElementsByTagName("FixtureType")[0];
             temp.FixtureType = returnIfDefined(fixtype.attributes.name);
             temp.Patch = patch;
+            temp.DipPatch = getDipPatch(subfixtures);
             temp.Position = getPosition(subfixtures);
             temp.Color = subfixtures[0].attributes.color.value;
             data[layer.attributes.name.value].data.push(temp);
@@ -88,7 +89,7 @@ function returnIfDefined(element, appendifdefined = ""){
     return (typeof element !== "undefined")?element.value + appendifdefined:null;
 }
 
-function getPatch(subfixtures){
+function getAddress(subfixtures){
     let address;
     if(subfixtures.length === 1){
         address = Number(subfixtures[0].getElementsByTagName("Address")[0].textContent);
@@ -99,7 +100,28 @@ function getPatch(subfixtures){
         }
         address = Math.min(...patches);
     }
-    return (address !== 0)?Math.ceil(address/512)+"."+('000' + address%512).slice(-3):null;
+    return address;
+}
+
+function getPatch(subfixtures){
+    let address = getAddress(subfixtures);
+    return (address !== 0)?Math.ceil(address/512)+"."+('000' + ((address%(512)===0)?(512):(address%(512)))).slice(-3):null;
+}
+
+function getDipPatch(subfixtures){
+    let address = getAddress(subfixtures);
+    if(address !== 0){
+        address = (address%(512)===0)?512:address%(512);
+        dips = getAllIndexes((address.toString(2)).split("").reverse(), "1");
+        dipstring = "";
+        dips.forEach( function (element, index) {
+            dipstring += (element + 1);
+            dipstring += (index === dips.length-1)?(""):("+");
+        })
+        return dipstring;
+    }else{
+        return null;
+    }
 }
 
 function getMiddle(valueArray){
@@ -141,4 +163,12 @@ function getPosition(subfixtures){
     if(typeof position.y === "undefined") position.y = null;
     if(typeof position.z === "undefined") position.z = null;
     return position;
+}
+
+function getAllIndexes(arr, val) {
+    var indexes = [], i;
+    for(i = 0; i < arr.length; i++)
+        if (arr[i] === val)
+            indexes.push(i);
+    return indexes;
 }
