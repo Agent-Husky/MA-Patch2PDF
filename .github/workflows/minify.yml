@@ -1,8 +1,10 @@
 name: minifyJS
-on: push
+on: 
+  push:
+    branches: [master]
 jobs:
   minify:
-    runs-on: debian-latest
+    runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so auto-minify job can access it
