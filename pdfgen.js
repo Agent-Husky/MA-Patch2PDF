@@ -14,6 +14,11 @@ function getbase64(imgsrcid){
 
 function pdfgen(filedata, filename){
     pdflayercontent = [];
+    layerindexes = [];
+    Object.values(filedata).forEach(data =>{
+        layerindexes.push(data.index);
+    });
+    layerindexes.sort(function(a, b){return a - b});
     Object.entries(filedata).forEach(entry => {
         const [layer, layervalue] = entry;
         layertable = [];
@@ -25,7 +30,7 @@ function pdfgen(filedata, filename){
             layout: "fixturetable",
             table: {
                 headerRows: 1,
-                widths:[25, 25, 30, 70, 130, "*"],
+                widths:[25, 25, 30, "*", 130, 70],
                 body:[
                     [{text: "Fix ID", style: "layerTableHeader"}, {text: "Ch ID", style: "layerTableHeader"}, {text: "Patch", style: "layerTableHeader"}, {text: "Fixture Name", style: "layerTableHeader"}, {text: "Fixture Type", style: "layerTableHeader"}, {text: "Position (X|Y|Z)", style: "layerTableHeader"}]
                 ]
@@ -47,7 +52,7 @@ function pdfgen(filedata, filename){
             ]);
         });
         layertable[0].push(temptable);
-        pdflayercontent[layervalue.index-1] = layertable;
+        pdflayercontent[layerindexes.indexOf(layervalue.index)] = layertable;
     });
 
     dd = {
