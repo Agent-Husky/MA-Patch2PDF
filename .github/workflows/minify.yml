@@ -1,7 +1,13 @@
 name: minifyJS
 on: 
-  push:
-    branches: [master]
+  pull_request:
+    types: 
+      - closed
+    branches: 
+      - 'master'
+    paths:
+      - '**.js'
+      - '**.css'
 jobs:
   minify:
     runs-on: ubuntu-latest
@@ -10,8 +16,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so auto-minify job can access it
       - uses: actions/checkout@v4
-        #with:
-        #  token: ${{ secrets.PAT }}
+        with:
+          token: ${{ secrets.PAT }}
     
       - name: Auto Minify
         uses: nizarmah/auto-minify@v2.1
