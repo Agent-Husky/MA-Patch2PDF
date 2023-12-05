@@ -104,14 +104,13 @@ function pdfgen(filedata, filename){
         }],
         content: [{
             layout: "layertable",
-            widths: ["*"],
             margin: [0,0,0,0],
             table:
             {
+                widths: ["*"],
                 body: pdflayercontent
             }
         }],
-        //content: pdflayercontent,
         styles: {
             layerTableHeader: {
                 alignment: "left",
