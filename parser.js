@@ -15,6 +15,7 @@ function readFile(){
             filecontent = parseXML(reader.result);
         }
         filename = file.name;
+        listAllLayers(filecontent);
         },
         false,
     );
@@ -116,7 +117,7 @@ function getDipPatch(subfixtures){
         dipstring = "";
         dips.forEach( function (element, index) {
             dipstring += (element + 1);
-            dipstring += (index === dips.length-1)?(""):("+");
+            dipstring += (index === dips.length-1)?(""):(",");
         })
         return dipstring;
     }else{
@@ -171,4 +172,11 @@ function getAllIndexes(arr, val) {
         if (arr[i] === val)
             indexes.push(i);
     return indexes;
+}
+
+function listAllLayers(filecontent){
+    Object.keys(filecontent).forEach(element => {
+        document.getElementById("layerlist").innerHTML = document.getElementById("layerlist").innerHTML + element + "<br>";
+    });
+    //TODO: add auto generated option list for layer specific config using default config for the beginning
 }

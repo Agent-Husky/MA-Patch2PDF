@@ -10,16 +10,16 @@
     <script src="./lib/pdfmake.min.js"></script>
     <script src="./lib/vfs_fonts.js"></script>
     <script src="pdfgen.js"></script>
+    <script src="./js/loadconfig.js"></script>
 </head>
 
 <body>
     <form>
-        <select id="logoselector" onchange="document.getElementById('Logo').src = 'include/'+document.getElementById('logoselector').value">
-            <option value="ma.png" selected>MA Lighting</option>
-            <option value="amplified.png">Amplified</option>
+        <select id="logoselector" onchange="document.getElementById('Logo').src = document.getElementById('logoselector').value">
         </select>
         <img id="Logo" src="include/ma.png" style="display:none"/>
-        <input id="fileinput" onchange="readFile()" type="file">
+        <input id="fileinput" onchange="readFile()" type="file"><br>
+        <span id="layerlist" style="font-family: Arial, Helvetica, sans-serif;"></span>
     </form>
     <div id="testcontent"></div>
 </body>

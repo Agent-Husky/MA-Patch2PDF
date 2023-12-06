@@ -30,26 +30,35 @@ function pdfgen(filedata, filename){
             layout: "fixturetable",
             table: {
                 headerRows: 1,
-                widths:[25, 25, 30, "*", 130, 70],
+                widths:[],
                 body:[
-                    [{text: "Fix ID", style: "layerTableHeader"}, {text: "Ch ID", style: "layerTableHeader"}, {text: "Patch", style: "layerTableHeader"}, {text: "Fixture Name", style: "layerTableHeader"}, {text: "Fixture Type", style: "layerTableHeader"}, {text: "Position (X|Y|Z)", style: "layerTableHeader"}]
+                    []
                 ]
             },
             fontSize: 9
         };
+        defaultTableHeaders.forEach(element => {
+            if(element.enabled){
+                temptable.table.widths.push(element.width);
+                temptable.table.body[0].push({text: element.name, style: "layerTableHeader"});
+            }
+        });
         tablebody = temptable.table.body;
         Object.entries(layervalue.data).forEach(entry => {
             const[fixture, value] = entry;
-            tablebody.push([
-                {text: value.FixtureID, alignment: "right"},
-                {text: value.ChannelID, alignment: "right"},
-                {text: value.Patch, alignment: "right"},
-                {text: value.Name, alignment: "left"},
-                {text: value.FixtureType, alignment: "left"},
-                ((/\.[^/.]+$/).exec(filename)[0] === ".xml" && value.Position.x !== null && value.Position.y !== null && value.Position.z !== null)?
-                    {text: "( "+ value.Position.x + " | " + value.Position.y + " | " + value.Position.z + " )", alignment: "left"} :
-                    ""
-            ]);
+            temptablebody = [];
+            defaultTableHeaders.forEach(element => {
+                if(element.enabled){
+                    if(typeof element.specialType !== "undefined" && element.specialType === "Position"){
+                        temptablebody.push(
+                            ((/\.[^/.]+$/).exec(filename)[0] === ".xml" && value.Position.x !== null && value.Position.y !== null && value.Position.z !== null)?
+                            {text: "( "+ value.Position.x + " | " + value.Position.y + " | " + value.Position.z + " )", alignment: element.valAlignment} :"");
+                    }else{
+                        temptablebody.push({text: value[element.parserVar], alignment: element.valAlignment});
+                    }
+                }
+            });
+            tablebody.push(temptablebody);
         });
         layertable[0].push(temptable);
         pdflayercontent[layerindexes.indexOf(layervalue.index)] = layertable;
