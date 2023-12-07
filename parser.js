@@ -2,7 +2,6 @@ var filecontent;
 var filename;
 
 function readFile(){
-    const content = document.getElementById("testcontent");
     const [file] = document.querySelector("input[type=file]").files;
     const reader = new FileReader();
 
@@ -14,6 +13,7 @@ function readFile(){
         }else if(file.type === "text/xml"){
             filecontent = parseXML(reader.result);
         }
+        document.getElementById("pdfgen").style.display = "";
         filename = file.name;
         listAllLayers(filecontent);
         },

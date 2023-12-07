@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background-color: var(--backgroundcolor);
+    color: var(--textcolor);
+}
+
+section.header {
+    width: 100vw;
+    height: 80px;
+    background-color: var(--headerbackground);
+    color: var(--headertextcolor);
+    text-align: center;
+}
+
+section.header div {
+    height: 100%;
+}
+
+div.center {
+    display: flex;
+    justify-content: center;
+}
+
+div.verticalcenter {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+section.header .title {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+section.header .note {
+    font-size: 20px;
+}
+
+section#pdfgen div#buttondiv {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+section#pdfgen btn {
+    background-color: var(--inputbackground);
+    color: var(--inputcolor);
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 15px;
+}
+
+#drop_zone {
+    cursor: pointer;
+    text-align: center;
+    border: none;
+    width: clamp(500px, 90%, 1000px);
+    padding: 15px 0;
+    margin: 15px auto;
+    border-radius: 15px;
+    background-color: var(--inputbackground);
+    background-image: url("data:image/svg+xml,%3csvg width=\'100%25\' height=\'100%25\' xmlns=\'http://www.w3.org/2000/svg\'%3e%3crect width=\'100%25\' height=\'100%25\' fill=\'none\' rx=\'15\' ry=\'15\' stroke=\'%23333\' stroke-width=\'5\' stroke-dasharray=\'6%2c 14\' stroke-dashoffset=\'14\' stroke-linecap=\'square\'/%3e%3c/svg%3e");
+    position: relative;
+}
+
+#drop_zone:hover {
+    background-color: var(--dropzonehoverbackground);
+}
+
+:root {
+    --backgroundcolor: rgb(205, 211, 210);
+    --textcolor: rgb(102, 102, 102);
+    --headertextcolor: rgb(129, 129, 129);
+    --headerbackground: rgb(205, 211, 210);
+    --inputcolor: rgb(102, 102, 102);
+    --inputbackground: rgb(225 225 225);
+    --dropzonebackground: rgb(205, 211, 210);
+    --dropzonehoverbackground: #676565;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --backgroundcolor: rgb(71, 71, 71);
+        --textcolor: #fff;
+        --headertextcolor: rgb(221, 221, 221);
+        --headerbackground: rgb(70 137 126);
+        --inputcolor: #fff;
+        --inputbackground: rgb(122, 133, 131);
+        --dropzonebackground: rgb(122, 133, 131);
+        --dropzonehoverbackground: rgb(174, 178, 178);
+    }
+}
