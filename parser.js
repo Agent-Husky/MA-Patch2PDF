@@ -187,8 +187,10 @@ function loadperlayerconfig(filecontent){
         console.log(table);
         tablerows = table.getElementsByTagName("tr");
         defaultTableHeaders.forEach((entry, index) => {
+            //create table header element with setting name
             th = document.createElement("th");
             th.innerHTML = entry.name;
+            // create table entry element with switch
             td = document.createElement("td");
             label = document.createElement("label");
             label.classList.add("switch");
@@ -203,6 +205,7 @@ function loadperlayerconfig(filecontent){
             slider.classList.add("round");
             label.appendChild(slider);
             td.appendChild(label);
+            // append created elements to according table rows
             tablerows[0].appendChild(th);
             tablerows[1].appendChild(td);
         });
