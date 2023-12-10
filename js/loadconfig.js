@@ -13,6 +13,5 @@ function loadConfig(default_config_json){
         option.text = logo.displayName;
         logoselector.appendChild(option);
     });
-    logoselector.selectedIndex = 0;
-    logoselector.dispatchEvent(new Event('change'));
+    createSelect();
 }

@@ -3,10 +3,16 @@ body {
     margin: 0;
     background-color: var(--backgroundcolor);
     color: var(--textcolor);
+    min-width: fit-content;
+}
+
+p {
+    margin: 0;
 }
 
 section.header {
-    width: 100vw;
+    min-width: 100vw;
+    width: 100%;
     height: 80px;
     background-color: var(--headerbackground);
     color: var(--headertextcolor);
@@ -50,6 +56,8 @@ section#pdfgen btn {
     border-radius: 15px;
 }
 
+/* Custom Drop */
+
 #drop_zone {
     cursor: pointer;
     text-align: center;
@@ -67,11 +75,194 @@ section#pdfgen btn {
     background-color: var(--dropzonehoverbackground);
 }
 
+#drop_zone p {
+    margin: 10px;
+}
+
+/* Custom Select Dropdown */
+
+div.custom-select {
+    position: relative;
+    font-family: Arial;
+}
+
+.custom-select select {
+    display: none;
+}
+
+.select-selected,
+.select-items {
+    background-color: var(--inputbackground);
+    border-radius: 10px;
+}
+
+.select-selected:after {
+    position: absolute;
+    content: "";
+    top: 14px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-color: #fff transparent transparent transparent;
+}
+
+.select-selected.select-arrow-active:after {
+    border-color: transparent transparent #fff transparent;
+    top: 7px;
+}
+
+.select-items div,
+.select-selected {
+    color: var(--inputcolor);
+    padding: 8px 16px;
+    padding-right: 25px;
+    border: 1px solid transparent;
+    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+    cursor: pointer;
+}
+
+.select-items {
+    border-radius: 0 0 10px 10px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+
+.select-hide {
+    display: none;
+}
+
+.select-items div:hover,
+.same-as-selected {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Check Switch */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 23px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #a80000;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 17px;
+    width: 17px;
+    left: 3.5px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: rgb(0, 145, 0);
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(16px);
+    -ms-transform: translateX(16px);
+    transform: translateX(16px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 23px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+#perlayerconfig {
+    min-width: 600px;
+    margin: 0 10px;
+}
+
+div.layerconfig {
+    margin-bottom: 20px;
+}
+
+div.layerconfig table {
+    margin-left: 15px;
+    border-collapse: collapse;
+}
+
+div.layerconfig tr:first-child>th {
+    padding: 0px 10px;
+    padding-bottom: 5px;
+    border-top: 0;
+}
+
+div.layerconfig tr:last-child>td {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+div.layerconfig th:first-child,
+div.layerconfig td:first-child {
+    border-left: 0;
+}
+
+div.layerconfig th:last-child,
+div.layerconfig td:last-child {
+    border-right: 0;
+}
+
+div.layerconfig th {
+    font-weight: bold;
+    font-size: 18px;
+    text-align: left;
+    border: 2px solid;
+    border-color: var(--textcolor);
+}
+
+div.layerconfig td {
+    text-align: center;
+    border: 2px solid;
+    border-color: var(--textcolor);
+    padding: 5px 10px;
+}
+
+div.layerconfig .layerconfigheader {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 5px
+}
+
 :root {
-    --backgroundcolor: rgb(205, 211, 210);
+    --backgroundcolor: rgb(255, 255, 255);
     --textcolor: rgb(102, 102, 102);
     --headertextcolor: rgb(129, 129, 129);
-    --headerbackground: rgb(205, 211, 210);
+    --headerbackground: rgb(194, 203, 201);
     --inputcolor: rgb(102, 102, 102);
     --inputbackground: rgb(225 225 225);
     --dropzonebackground: rgb(205, 211, 210);

@@ -7,11 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MA Patch to PDF</title>
     <link rel="stylesheet" href="/css/main.css">
+    <script src="./js/custom-select.js"></script>
+    <script src="./js/loadconfig.js"></script>
     <script src="./parser.js"></script>
     <script src="./lib/pdfmake.min.js"></script>
     <script src="./lib/vfs_fonts.js"></script>
     <script src="pdfgen.js"></script>
-    <script src="./js/loadconfig.js"></script>
 </head>
 
 <body>
@@ -25,22 +26,26 @@
         <img id="Logo" style="display:none"/>
         <div class="center">
             <input id="fileinput" onchange="" type="file" accept=".xml, .csv" hidden><br>
-            <div id="drop_zone" ondragover="dragOverHandler(event);" style="">
+            <div id="drop_zone" ondragover="dragOverHandler(event);">
                 <p>Datei hochladen</p>
             </div>
         </div>
         <script src="./js/dropzonehandler.js"></script>
     </section>
-    <section class="config">
+    <section class="config" style="margin-bottom: 10px;">
         <div class="center">
-            <select id="logoselector" onchange="document.getElementById('Logo').src = document.getElementById('logoselector').value">
-            </select>
-        </div>
-        <div class="center">
-            <span id="layerlist"></span>
+            <div class="custom-select">
+                <select id="logoselector" onchange="document.getElementById('Logo').src = document.getElementById('logoselector').value">
+                </select>
+            </div>
         </div>
     </section>
-    <section id="pdfgen" style="display: none">
+    <section class="config" style="margin-bottom: 10px;">
+        <div class="center">
+            <span id="perlayerconfig"></span>
+        </div>
+    </section>
+    <section id="pdfgen" style="display: none; margin-bottom: 20px;">
         <div id="buttondiv" class="center">
             <btn onclick="pdfgen(filecontent, filename); pdfMake.createPdf(dd).open()" style="margin-right: 30px">PDF öffnen</btn>
             <btn onclick="pdfgen(filecontent, filename); pdfMake.createPdf(dd).download(filename.replace(/\.[^/.]+$/, ''))">PDF herunterladen</btn>

@@ -1,7 +1,14 @@
-//TODO: Idee: Option für zusätzlichen Dip Patch
 var pdflayercontent;
-var temptable;
 var dd;
+
+function getPerLayerConfig() {
+    let perlayerconfig = {};
+    for (chkbx of document.querySelectorAll('.layerconfig input[type=checkbox]:checked')){
+        if(typeof perlayerconfig[chkbx.name] === "undefined") perlayerconfig[chkbx.name] = [];
+        perlayerconfig[chkbx.name].push(Number(chkbx.value));
+    }
+    return perlayerconfig;
+}
 
 function getbase64(imgsrcid){
     const imgToExport = imgsrcid;
@@ -15,6 +22,7 @@ function getbase64(imgsrcid){
 function pdfgen(filedata, filename){
     pdflayercontent = [];
     layerindexes = [];
+    perlayerconfig = getPerLayerConfig();
     Object.values(filedata).forEach(data =>{
         layerindexes.push(data.index);
     });
@@ -37,17 +45,32 @@ function pdfgen(filedata, filename){
             },
             fontSize: 9
         };
-        defaultTableHeaders.forEach(element => {
+        perlayerconfig[layer].forEach(confindex => {
+            element = defaultTableHeaders[confindex];
+            temptable.table.widths.push(element.width);
+            temptable.table.body[0].push({text: element.name, style: "layerTableHeader"});
+        });
+        /* defaultTableHeaders.forEach(element => {
             if(element.enabled){
                 temptable.table.widths.push(element.width);
                 temptable.table.body[0].push({text: element.name, style: "layerTableHeader"});
             }
-        });
+        }); */
         tablebody = temptable.table.body;
         Object.entries(layervalue.data).forEach(entry => {
             const[fixture, value] = entry;
             temptablebody = [];
-            defaultTableHeaders.forEach(element => {
+            perlayerconfig[layer].forEach(confindex => {
+                element = defaultTableHeaders[confindex];
+                if(typeof element.specialType !== "undefined" && element.specialType === "Position"){
+                    temptablebody.push(
+                        ((/\.[^/.]+$/).exec(filename)[0] === ".xml" && value.Position.x !== null && value.Position.y !== null && value.Position.z !== null)?
+                        {text: "( "+ value.Position.x + " | " + value.Position.y + " | " + value.Position.z + " )", alignment: element.valAlignment} :"");
+                }else{
+                    temptablebody.push({text: value[element.parserVar], alignment: element.valAlignment});
+                }
+            });
+            /* defaultTableHeaders.forEach(element => {
                 if(element.enabled){
                     if(typeof element.specialType !== "undefined" && element.specialType === "Position"){
                         temptablebody.push(
@@ -57,7 +80,7 @@ function pdfgen(filedata, filename){
                         temptablebody.push({text: value[element.parserVar], alignment: element.valAlignment});
                     }
                 }
-            });
+            }); */
             tablebody.push(temptablebody);
         });
         layertable[0].push(temptable);
@@ -84,7 +107,6 @@ function pdfgen(filedata, filename){
                     fit: [150, 40],
                     image: getbase64(document.getElementById("Logo")),
                     alignment:'right'
-
                 }
             ], margin: [20, 20, 20, 0]
             }, {

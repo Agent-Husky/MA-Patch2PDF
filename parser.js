@@ -15,7 +15,7 @@ function readFile(){
         }
         document.getElementById("pdfgen").style.display = "";
         filename = file.name;
-        listAllLayers(filecontent);
+        loadperlayerconfig(filecontent);
         },
         false,
     );
@@ -174,9 +174,40 @@ function getAllIndexes(arr, val) {
     return indexes;
 }
 
-function listAllLayers(filecontent){
+function loadperlayerconfig(filecontent){
     Object.keys(filecontent).forEach(element => {
-        document.getElementById("layerlist").innerHTML = document.getElementById("layerlist").innerHTML + element + "<br>";
+        layerdiv = document.createElement("div");
+        layerdiv.classList.add("layerconfig");
+        layertext = document.createElement("p");
+        layertext.innerHTML = element;
+        layertext.classList.add("layerconfigheader");
+        table = document.createElement("table");
+        table.appendChild(document.createElement("tr"));
+        table.appendChild(document.createElement("tr"));
+        console.log(table);
+        tablerows = table.getElementsByTagName("tr");
+        defaultTableHeaders.forEach((entry, index) => {
+            th = document.createElement("th");
+            th.innerHTML = entry.name;
+            td = document.createElement("td");
+            label = document.createElement("label");
+            label.classList.add("switch");
+            chkbx = document.createElement("input");
+            chkbx.type = "checkbox";
+            chkbx.name = element;
+            chkbx.value = index;
+            chkbx.checked = entry.enabled;
+            label.appendChild(chkbx);
+            slider = document.createElement("span");
+            slider.classList.add("slider");
+            slider.classList.add("round");
+            label.appendChild(slider);
+            td.appendChild(label);
+            tablerows[0].appendChild(th);
+            tablerows[1].appendChild(td);
+        });
+        layerdiv.appendChild(layertext);
+        layerdiv.appendChild(table);
+        document.getElementById("perlayerconfig").appendChild(layerdiv);
     });
-    //TODO: add auto generated option list for layer specific config using default config for the beginning
 }
