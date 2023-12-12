@@ -1,2 +1,4 @@
 Testdata/
 .DS_Store
+include/*
+!include/ma.png
