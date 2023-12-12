@@ -9,13 +9,25 @@ function readFile(){
         "load",
         () => {
         if(file.type === "text/csv"){
-            filecontent = parseCSV(reader.result);
+            filecontent = parseCSV(reader.result, file.name);
         }else if(file.type === "text/xml"){
-            filecontent = parseXML(reader.result);
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(reader.result,"text/xml");
+            if (xmlDoc.getElementsByTagName("MA").length > 0 && xmlDoc.getElementsByTagName("MA")[0].attributes.xmlns.value.includes("grandma2")) {
+                filecontent = parseMA2XML(xmlDoc, file.name);
+            }else if(xmlDoc.getElementsByTagName("GMA3").length > 0){
+                // TODO: print error for only supporting custom exporter
+            }
+        }else if(file.type === "application/json"){
+            filecontent = JSON.parse(reader.result);
+            if(filecontent.Version != "GMA3") return;
+            filecontent.exportTime = new Date(filecontent.exportTime).toLocaleString();
         }
-        document.getElementById("pdfgen").style.display = "";
-        filename = file.name;
-        loadperlayerconfig(filecontent);
+        if(filecontent){
+            document.getElementById("pdfgen").style.display = "";
+            filename = file.name;
+            loadperlayerconfig(filecontent.data);
+        }
         },
         false,
     );
@@ -25,7 +37,8 @@ function readFile(){
     }
 }
 
-function parseCSV(csv) {
+function parseCSV(csv, filename) {
+    var table = {};
     var data = {};
     lines = csv.replace(/\"/g, "").split("\n");
     headers = lines[0].split(";");
@@ -51,13 +64,15 @@ function parseCSV(csv) {
         if(typeof data[layer].data === "undefined") data[layer].data = [];
         data[layer].data.push(temp);
     });
-    return data;
+    table.showname = filename.replace(/\.[^/.]+$/, "");
+    table.exportTime = new Date().toLocaleString();
+    table.data = data;
+    return table;
 }
 
-function parseXML(xml) {
+function parseMA2XML(xmlDoc, filename) {
+    var table = {};
     var data = {};
-    parser = new DOMParser();
-    xmlDoc = parser.parseFromString(xml,"text/xml");
     layers = xmlDoc.getElementsByTagName("Layer");
     for (let layer of layers) {
         if(typeof data[layer] === "undefined"){
@@ -81,6 +96,44 @@ function parseXML(xml) {
             temp.Position = getPosition(subfixtures);
             temp.Color = subfixtures[0].attributes.color.value;
             data[layer.attributes.name.value].data.push(temp);
+        }
+    }
+    table.showname = filename.replace(/\.[^/.]+$/, "");
+    table.exportTime = new Date(xmlDoc.getElementsByTagName("Info")[0].attributes.datetime.value).toLocaleString();
+    table.data = data;
+    return table;
+}
+
+function parseMA3XML(xmlDoc){
+    var data = {};
+    layers = xmlDoc.getElementsByTagName("GMA3")[0].children;
+
+    // create 2 lists ( groups and fixtures ) --> fixture children length > 0 --> group else fixture
+    for (let layer of layers) {
+        if(typeof data[layer] === "undefined"){
+            data[layer.attributes.Name.value] = {};
+            data[layer.attributes.Name.value].data = [];
+            data[layer.attributes.Name.value].index = Number(layer.attributes.FID.value);
+        }
+        fixtures = layer.getElementsByTagName("Fixture");
+        for (let fixture of fixtures){
+            subfixtures = fixture.getElementsByTagName("SubFixture");
+            console.log(fixture);
+            //patch = getPatch(subfixtures);
+            patch = fixture.attributes.Patch.value;
+            if(patch === null) continue;
+            temp = {};
+            temp.FixtureID = returnIfDefined(fixture.attributes.FID);
+            temp.ChannelID = null;
+            //temp.ChannelID = returnIfDefined(fixture.attributes.channel_id, "." + (Number(subfixtures[0].attributes.index.value)+1));
+            temp.Name = returnIfDefined(fixture.attributes.name);
+            //fixtype = fixture.getElementsByTagName("FixtureType")[0];
+            //temp.FixtureType = returnIfDefined(fixtype.attributes.name);
+            temp.Patch = patch;
+            //temp.DipPatch = getDipPatch(subfixtures);
+            temp.Position = getPosition(subfixtures);
+            //temp.Color = subfixtures[0].attributes.color.value;
+            data[layer.attributes.Name.value].data.push(temp);
         }
     }
     return data;

@@ -23,11 +23,11 @@ function pdfgen(filedata, filename){
     pdflayercontent = [];
     layerindexes = [];
     perlayerconfig = getPerLayerConfig();
-    Object.values(filedata).forEach(data =>{
+    Object.values(filedata.data).forEach(data =>{
         layerindexes.push(data.index);
     });
     layerindexes.sort(function(a, b){return a - b});
-    Object.entries(filedata).forEach(entry => {
+    Object.entries(filedata.data).forEach(entry => {
         const [layer, layervalue] = entry;
         layertable = [];
         layertable[0] = [];
@@ -64,7 +64,7 @@ function pdfgen(filedata, filename){
                 element = defaultTableHeaders[confindex];
                 if(typeof element.specialType !== "undefined" && element.specialType === "Position"){
                     temptablebody.push(
-                        ((/\.[^/.]+$/).exec(filename)[0] === ".xml" && value.Position.x !== null && value.Position.y !== null && value.Position.z !== null)?
+                        (((/\.[^/.]+$/).exec(filename)[0] === ".xml" || (/\.[^/.]+$/).exec(filename)[0] === ".json") && value.Position.x !== null && value.Position.y !== null && value.Position.z !== null)?
                         {text: "( "+ value.Position.x + " | " + value.Position.y + " | " + value.Position.z + " )", alignment: element.valAlignment} :"");
                 }else{
                     temptablebody.push({text: value[element.parserVar], alignment: element.valAlignment});
@@ -121,13 +121,11 @@ function pdfgen(filedata, filename){
                         text: "Show:", bold: true
                         
                     }, {
-                        text: filename.replace(/\.[^/.]+$/, "")
+                        text: filedata.showname
                     }, {
                         text: "Export Date:", bold: true
                     }, {
-                        text: ((/\.[^/.]+$/).exec(filename)[0] === ".xml")?
-                            new Date(xmlDoc.getElementsByTagName("Info")[0].attributes.datetime.value).toLocaleString():
-                            new Date().toLocaleString()
+                        text: filedata.exportTime
                     }]
                     ]
                 },
