@@ -1,8 +1,10 @@
 let defaultTableHeaders = [];
 
-fetch('/default_config.json')
-    .then((response) => response.json())
-    .then((json) => loadConfig(json));
+document.addEventListener("DOMContentLoaded", function(event) {
+    fetch('./default_config.json')
+        .then((response) => response.json())
+        .then((json) => loadConfig(json));
+});
 
 function loadConfig(default_config_json){
     logoselector = document.getElementById("logoselector");
