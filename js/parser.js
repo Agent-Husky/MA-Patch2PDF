@@ -228,6 +228,7 @@ function getAllIndexes(arr, val) {
 }
 
 function loadperlayerconfig(filecontent){
+    document.getElementById("perlayerconfig").innerHTML = "";
     Object.keys(filecontent).forEach(element => {
         layerdiv = document.createElement("div");
         layerdiv.classList.add("layerconfig");
