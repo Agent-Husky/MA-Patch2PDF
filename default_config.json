@@ -3,10 +3,6 @@
         {
             "displayName": "MA Lighting",
             "filePath": "/include/ma.png"
-        },
-        {
-            "displayName": "Amplified",
-            "filePath": "/include/amplified.png"
         }
     ],
     "tableHeaders": [
