@@ -2,7 +2,7 @@
     "logos": [
         {
             "displayName": "MA Lighting",
-            "filePath": "/include/ma.png"
+            "filePath": "./include/ma.png"
         }
     ],
     "tableHeaders": [
